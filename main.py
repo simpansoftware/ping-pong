@@ -1,6 +1,7 @@
 import turtle
 import time
 import random
+import sys
 
 def twopointfive():
     ranint = random.randint(0, 1)
@@ -69,11 +70,12 @@ screen.onkeypress(down1, "s")
 screen.onkeypress(up2, "Up")
 screen.onkeypress(down2, "Down")
 
+point = 2
 run = True
 score.write(f"{p1score} | {p2score}", align="center", font=("Arial", 16))
 while run:
     try:
-        while p1score < 10 or p2score < 10:
+        while p1score < point and p2score < point: #this should be an or lowk but tha makes it not work
             ball.setx(ball.xcor() + ball.dx)
             ball.sety(ball.ycor() + ball.dy)
             if ball.ycor() > 220 or ball.ycor() < -220:
@@ -89,11 +91,14 @@ while run:
                 rpaddle.goto(200, 0)
                 lpaddle.goto(-200, 0)
                 screen.update()
-                time.sleep(1)
-                rpaddle.goto(200, 0)
-                lpaddle.goto(-200, 0)
-                ball.dx = twopointfive()
-                ball.dy = twopointfive()
+                if p1score > point - 1 or p2score > point - 1:
+                    break
+                else:
+                    time.sleep(1)
+                    rpaddle.goto(200, 0)
+                    lpaddle.goto(-200, 0)
+                    ball.dx = twopointfive()
+                    ball.dy = twopointfive()
             if rpaddle.ycor() > 220:
                 rpaddle.sety(220) 
             elif rpaddle.ycor() < -220:
@@ -106,15 +111,19 @@ while run:
             ball.dy *= 1.0005
             time.sleep(0.016)
             screen.update()
-        screen.clear()
+        screen.clear()        
+        screen.bgcolor("#000000")
         score.goto(0, 0)
-        if p1score < 10:
+        if p1score > point - 1:
             score.write("Player 1 won!", align="center", font=("Arial", 30))
-        elif p2score < 10:
+        elif p2score > point - 1:
             score.write("Player 2 won!", align="center", font=("Arial", 30))
         else:
-            score.colpr("red")
+            score.color("red")
             score.write("Something went pretty wrong here, please report", align="center", font=("Arial", 30))
+           
+        time.sleep(5)
+        sys.exit()
 
     except turtle.Terminator:
         run = False
