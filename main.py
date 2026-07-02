@@ -1,8 +1,16 @@
 import turtle
 import time
+import random
+
+def twopointfive():
+    ranint = random.randint(0, 1)
+    if ranint == 0:
+        return -2.5
+    else:
+        return 2.5
 
 screen = turtle.Screen()
-screen.title("Ping")
+screen.title("pong.")
 screen.bgcolor("#000000")
 screen.setup(width=640, height=480)
 screen.tracer(0)
@@ -25,12 +33,23 @@ rpaddle.penup()
 rpaddle.goto(200, 0)
 rpaddle.direction = "Stop"
 
-rpaddle = turtle.Turtle()
-rpaddle.shape("square")
-rpaddle.color("white")
-rpaddle.penup()
-rpaddle.goto(0, 0)
-rpaddle.direction = "Stop"
+ball = turtle.Turtle()
+ball.speed(4)
+ball.shape("square")
+ball.color("white")
+ball.penup()
+ball.goto(0, 0)
+ball.direction = "Stop"
+ball.dx = twopointfive()
+ball.dy = twopointfive()
+
+p1score = 0
+p2score = 0
+score = turtle.Turtle()
+score.color("white")
+score.hideturtle()
+score.penup()
+score.goto(0, 180)
 
 def down1():
     lpaddle.sety(lpaddle.ycor() - 20)
@@ -51,9 +70,51 @@ screen.onkeypress(up2, "Up")
 screen.onkeypress(down2, "Down")
 
 run = True
+score.write(f"{p1score} | {p2score}", align="center", font=("Arial", 16))
 while run:
     try:
-        screen.update()
+        while p1score < 10 or p2score < 10:
+            ball.setx(ball.xcor() + ball.dx)
+            ball.sety(ball.ycor() + ball.dy)
+            if ball.ycor() > 220 or ball.ycor() < -220:
+                ball.dy *= -1
+            if ball.xcor() > 310 or ball.xcor() < -310:
+                if ball.xcor() > 310:
+                    p1score += 1
+                else:
+                    p2score += 1
+                score.clear()
+                score.write(f"{p1score} | {p2score}", align="center", font=("Arial", 16))
+                ball.goto(0, 0)
+                rpaddle.goto(200, 0)
+                lpaddle.goto(-200, 0)
+                screen.update()
+                time.sleep(1)
+                rpaddle.goto(200, 0)
+                lpaddle.goto(-200, 0)
+                ball.dx = twopointfive()
+                ball.dy = twopointfive()
+            if rpaddle.ycor() > 220:
+                rpaddle.sety(220) 
+            elif rpaddle.ycor() < -220:
+                rpaddle.sety(-220)
+            if lpaddle.ycor() > 220:
+                lpaddle.sety(220) 
+            elif lpaddle.ycor() < -220:
+                lpaddle.sety(-220)
+            ball.dx *= 1.0005
+            ball.dy *= 1.0005
+            time.sleep(0.016)
+            screen.update()
+        screen.clear()
+        score.goto(0, 0)
+        if p1score < 10:
+            score.write("Player 1 won!", align="center", font=("Arial", 30))
+        elif p2score < 10:
+            score.write("Player 2 won!", align="center", font=("Arial", 30))
+        else:
+            score.colpr("red")
+            score.write("Something went pretty wrong here, please report", align="center", font=("Arial", 30))
 
     except turtle.Terminator:
         run = False
