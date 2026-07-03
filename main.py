@@ -11,7 +11,7 @@ def twopointfive():
         return 2.5
 
 screen = turtle.Screen()
-screen.title("pong.")
+screen.title("ping. pong.")
 screen.bgcolor("#000000")
 screen.setup(width=640, height=480)
 screen.tracer(0)
@@ -34,6 +34,22 @@ rpaddle.penup()
 rpaddle.goto(200, 0)
 rpaddle.direction = "Stop"
 
+rpaddlething = turtle.Turtle()
+rpaddlething.shape("square")
+rpaddlething.shapesize(stretch_wid=5, stretch_len=0.1)
+rpaddlething.color("red")
+rpaddlething.penup()
+rpaddlething.goto(190, 0)
+rpaddlething.direction = "Stop"
+
+lpaddlething = turtle.Turtle()
+lpaddlething.shape("square")
+lpaddlething.shapesize(stretch_wid=5, stretch_len=0.1)
+lpaddlething.color("red")
+lpaddlething.penup()
+lpaddlething.goto(-190, 0)
+lpaddlething.direction = "Stop"
+
 ball = turtle.Turtle()
 ball.speed(4)
 ball.shape("square")
@@ -46,6 +62,7 @@ ball.dy = twopointfive()
 
 p1score = 0
 p2score = 0
+ballhalf = 10
 score = turtle.Turtle()
 score.color("white")
 score.hideturtle()
@@ -70,7 +87,22 @@ screen.onkeypress(down1, "s")
 screen.onkeypress(up2, "Up")
 screen.onkeypress(down2, "Down")
 
-point = 2
+def bounce(paddle):
+    ball.dx *= -1
+    if paddle == lpaddle:
+        ball.setx(paddle.xcor() + 10 + 10)
+    else:
+        ball.setx(paddle.xcor() - 10 - 10)
+
+    offset = (ball.ycor() - paddle.ycor()) / 50
+    ball.dy += offset * random.uniform(1, 1.5)
+    max_dy = abs(ball.dx) * 1.5
+    if ball.dy > max_dy:
+        ball.dy = max_dy
+    elif ball.dy < -max_dy:
+        ball.dy = -max_dy
+
+point = 10
 run = True
 score.write(f"{p1score} | {p2score}", align="center", font=("Arial", 16))
 while run:
@@ -80,6 +112,10 @@ while run:
             ball.sety(ball.ycor() + ball.dy)
             if ball.ycor() > 220 or ball.ycor() < -220:
                 ball.dy *= -1
+            if (ball.dx > 0 and ball.xcor() + 10 >= rpaddle.xcor() - 10) and ball.xcor() < rpaddle.xcor() and rpaddle.ycor() - 50 <= ball.ycor() <= rpaddle.ycor() + 50:
+                bounce(rpaddle)
+            if (ball.dx < 0 and ball.xcor() - 10 <= lpaddle.xcor() + 10) and ball.xcor() > lpaddle.xcor() and lpaddle.ycor() - 50 <= ball.ycor() <= lpaddle.ycor() + 50:
+                bounce(lpaddle)
             if ball.xcor() > 310 or ball.xcor() < -310:
                 if ball.xcor() > 310:
                     p1score += 1
@@ -90,6 +126,8 @@ while run:
                 ball.goto(0, 0)
                 rpaddle.goto(200, 0)
                 lpaddle.goto(-200, 0)
+                rpaddlething.sety(rpaddle.ycor())
+                lpaddlething.sety(lpaddle.ycor())
                 screen.update()
                 if p1score > point - 1 or p2score > point - 1:
                     break
@@ -107,8 +145,10 @@ while run:
                 lpaddle.sety(220) 
             elif lpaddle.ycor() < -220:
                 lpaddle.sety(-220)
-            ball.dx *= 1.0005
-            ball.dy *= 1.0005
+            rpaddlething.sety(rpaddle.ycor())
+            lpaddlething.sety(lpaddle.ycor())
+            ball.dx *= 1.001
+            ball.dy *= 1.001
             time.sleep(0.016)
             screen.update()
         screen.clear()        
