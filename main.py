@@ -177,8 +177,12 @@ rpaddle.hideturtle()
 lpaddle.hideturtle()
 screen.update()
 while startloop:
-    time.sleep(0.016)
-    screen.update()
+    try:
+        time.sleep(0.016)
+        screen.update()
+    except Exception:
+        startloop=False
+        sys.exit()
 while run:
     try:
         while p1score < point and p2score < point: #this should be an or lowk but tha makes it not work
@@ -235,5 +239,6 @@ while run:
         time.sleep(5)
         sys.exit()
 
-    except turtle.Terminator:
+    except Exception:
         run = False
+        sys.exit()
