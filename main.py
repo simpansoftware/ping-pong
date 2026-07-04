@@ -11,7 +11,7 @@ def twopointfive():
         return 2.5
 
 screen = turtle.Screen()
-screen.title("ping. pong.")
+screen.title("ping pong")
 screen.bgcolor("#000000")
 screen.setup(width=640, height=480)
 screen.tracer(0)
@@ -34,21 +34,47 @@ rpaddle.penup()
 rpaddle.goto(200, 0)
 rpaddle.direction = "Stop"
 
-rpaddlething = turtle.Turtle()
-rpaddlething.shape("square")
-rpaddlething.shapesize(stretch_wid=5, stretch_len=0.1)
-rpaddlething.color("red")
-rpaddlething.penup()
-rpaddlething.goto(190, 0)
-rpaddlething.direction = "Stop"
+start = turtle.Turtle()
+start.shape("square")
+start.shapesize(stretch_wid=4, stretch_len=8)
+start.fillcolor("green")
+start.penup()
+start.hideturtle()
+start.goto(-150, -30)
 
-lpaddlething = turtle.Turtle()
-lpaddlething.shape("square")
-lpaddlething.shapesize(stretch_wid=5, stretch_len=0.1)
-lpaddlething.color("red")
-lpaddlething.penup()
-lpaddlething.goto(-190, 0)
-lpaddlething.direction = "Stop"
+starttext = turtle.Turtle()
+starttext.color("white")
+starttext.hideturtle()
+starttext.penup()
+starttext.hideturtle()
+starttext.goto(-190, -50)
+
+quitter = turtle.Turtle()
+quitter.shape("square")
+quitter.shapesize(stretch_wid=4, stretch_len=8)
+quitter.fillcolor("red")
+quitter.penup() 
+quitter.hideturtle()
+quitter.goto(150, -30)
+
+quittext = turtle.Turtle()
+quittext.color("white")
+quittext.hideturtle()
+quittext.penup()
+quittext.hideturtle()
+quittext.goto(110, -50)
+
+haha = turtle.Turtle()
+haha.color("gray")
+haha.penup()
+haha.hideturtle()
+haha.goto(0, 75)
+
+heart = turtle.Turtle()
+heart.color("gray")
+heart.penup()
+heart.hideturtle()
+heart.goto(0, -220)
 
 ball = turtle.Turtle()
 ball.speed(4)
@@ -69,6 +95,12 @@ score.hideturtle()
 score.penup()
 score.goto(0, 180)
 
+titletext = turtle.Turtle()
+titletext.color("white")
+titletext.hideturtle()
+titletext.penup()
+titletext.goto(0, 100)
+
 def down1():
     lpaddle.sety(lpaddle.ycor() - 20)
 
@@ -81,11 +113,32 @@ def down2():
 def up2():
     rpaddle.sety(rpaddle.ycor() + 20)
 
-screen.listen()
-screen.onkeypress(up1, "w")
-screen.onkeypress(down1, "s")
-screen.onkeypress(up2, "Up")
-screen.onkeypress(down2, "Down")
+def clickstuff(x, y):
+    global screen, startloop
+    if -230 <= x <= -70 and -70 <= y <= 10:
+        startbutton(x, y)
+        screen.onclick(None)
+    if 70 <= x <= 230 and -70 <= y <= 10:
+        startloop = False
+        sys.exit()
+
+def startbutton(x, y):
+    global startloop, run
+    start.clearstamps()
+    quitter.clearstamps()
+    titletext.clear()
+    heart.clear()
+    haha.clear()
+    starttext.clear()
+    quittext.clear()
+    ball.showturtle()
+    rpaddle.showturtle()
+    lpaddle.showturtle()
+    score.write(f"{p1score} | {p2score}", align="center", font=("Arial", 16))
+    startloop = False
+    screen.update()
+    time.sleep(1)
+    run = True
 
 def bounce(paddle):
     ball.dx *= -1
@@ -102,9 +155,30 @@ def bounce(paddle):
     elif ball.dy < -max_dy:
         ball.dy = -max_dy
 
+screen.listen()
+screen.onkeypress(up1, "w")
+screen.onkeypress(down1, "s")
+screen.onkeypress(up2, "Up")
+screen.onkeypress(down2, "Down")
+screen.onclick(clickstuff)
+
 point = 10
-run = True
-score.write(f"{p1score} | {p2score}", align="center", font=("Arial", 16))
+run = False
+startloop = True
+start.stamp()
+quitter.stamp()
+titletext.write("ping pong", align="center", font=("Arial", 60))
+starttext.write("Start", font=("Arial", 30))
+quittext.write("Quit", font=("Arial", 30))
+heart.write("Made with love by simpansoftware", align="center", font=("Arial", 10))
+haha.write("(but mostly pong)", align="center", font=("Arial", 12))
+ball.hideturtle()
+rpaddle.hideturtle()
+lpaddle.hideturtle()
+screen.update()
+while startloop:
+    time.sleep(0.016)
+    screen.update()
 while run:
     try:
         while p1score < point and p2score < point: #this should be an or lowk but tha makes it not work
@@ -126,8 +200,6 @@ while run:
                 ball.goto(0, 0)
                 rpaddle.goto(200, 0)
                 lpaddle.goto(-200, 0)
-                rpaddlething.sety(rpaddle.ycor())
-                lpaddlething.sety(lpaddle.ycor())
                 screen.update()
                 if p1score > point - 1 or p2score > point - 1:
                     break
@@ -145,8 +217,6 @@ while run:
                 lpaddle.sety(220) 
             elif lpaddle.ycor() < -220:
                 lpaddle.sety(-220)
-            rpaddlething.sety(rpaddle.ycor())
-            lpaddlething.sety(lpaddle.ycor())
             ball.dx *= 1.001
             ball.dy *= 1.001
             time.sleep(0.016)
